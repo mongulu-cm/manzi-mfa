@@ -1,0 +1,106 @@
+deploymentEasyappointment:
+  image: highcanfly/easyappointments
+  imageTag: latest
+  googleSync: 'FALSE'
+  dbusername: root
+  dbname: easyappointments
+  dbhost: mysql
+  debug: 'TRUE'
+  language: english
+  baseUrl: 'http://localhost:8888'
+pvcEasyappointments:
+  storage: 1Gi
+ingressEasyappointments:
+  ingressClassName: traefik
+  host: manzi-mfa.mongulu.cm
+  #clusterIssuer: our-ca-issuer
+serviceEasyappointment:
+  port: 8888
+replicaCount: 1
+
+mysql:
+  resources: 
+
+
+smtpd:
+  cloudflareApiKey: ""
+  cloudflareDnsRecords: ""
+  cloudflareZoneId: ""
+  ports:
+  - name: "25"
+    port: 25
+    targetPort: 25
+  postfixHostname: ""
+  replicas: 1
+  smtpd:
+    image:
+      repository: highcanfly/smtp-relay
+      tag: latest
+  smtpdAllowedSenderDomains: "example.org example.net example.com"
+  smtpdDkimPrivateKey: "-----BEGIN RSA PRIVATE KEY-----|MIIEowIBAAKCAQEA8h4OyvWHRHEre/JHWjwyL3YLC7Mjf13C8WSZtNX5K5PrAsz+|FFankVsKClLf7rpItKRaaeLQM98yiRkW47w4sBKJjXgEtI+KwB54N26YEPUJ7KpA|TAACL2dxhMlhvGkDEVB1h3CMwyV27oq3KQeCsdhuOSykQTh0FBDbA9K7S32G2uNv|D4ff7JGSKez8j+6gjk2CfDIWnayoIPmrldPo+qo7xFjJCfjlq4qXqLMGMScZKOqA|kQV9+v0AM52sBcPP7j3ZUHV4yNv26nE3iCtZbfatNbMwBaoaXXFby5iU3n7SlLwY|aIHg2/Woi027ht/zt+2UTU5oTFkh6DqA/pCWdwIDAQABAoIBAC2xHnmO/IgeE2bA|wlZ1JcNvM4ZxuDFBMJj9s0Q9XVisAZ31sb2E3PrBg5OPMFONNEti+O0isMgZRyA4|a+lujAQue2cHT1wD+ttm5KkRZgFNPSI8vwWYutDXZMT6fEdiSgHqfUOiKe5qE5fQ|9d/4WuHVRnfjxNvKG53t0GdYTaBhIiYFBoc4Sollg4iRMkzwRZngV6fD3SfZZ9Oh|iBttbdKFYz90Nn9RgxLPtXNPPEY7KkKpCIjED7Vz7RZrGyc7I+1JzViEL/wpYHaK|i915sEwimfYnJzwAUf/VR2gHd7GjhLnh9YAi/icPCHYlTefHLb4NKzXSEpAvjaGR|Dz6tjoECgYEA/ZcmA/q0KzbJUSekGZUss9L/0hHTfeIe856oacYBVgfc0qPk/RJL|12tXzT4aODAUvY1sXcWPCka95iam3Hbcz4ZyPlREor7nkghTzfAWp8B9pCqtKbnP|Ob63+60swRb5nPXS/6KHzfHXORtjjhJVnkrfSnvr9+tHzdjOc8vvtvsCgYEA9GsA|YzX4GVpgU+z90M2qBwQKGOZSkodsQ07KjmBusr4UKcWOKvE3xPibRY1GBN3QHLqO|IcOVvQdL9xAbNS5mRhwAtHASMRr7ay1lOmae10+wjAIPBTzLr0V8nsRdQt3O7iPn|yOqPzSjFBwJXYdd1BiqYMpLZKHeLPyxC+AIC9bUCgYBKWtc6s3fAc//zW7wyBBtn|XqbD4ZYxguuwYwTefsBFiWimGog56/Nw5niIJX1qnC54pc7wb8zRJoznvs2ONwvn|jXRR8kNttKwRlX99EriR107/o8PCSEkKlXE8yjolI6ds7mc/rVhEenSwuecm8RlJ|oIp4PH2j48jaAogGS/WtoQKBgG+FryyVgHmY+iDxHrK6VJ1U44KO/RgswGJJvjSO|nZPjFPImWQMRA0BVqwtmNY+c4gtpt9aCFn2kqa22ZKO0YygUOOIbzMEpLZSupuSp|1Eor60NG4TGjltCHZSBQOrl62aNhMK5FEI4szxGuqM5U7+l7X+ybgohrW1bczEW7|LTyNAoGBAOex2DsnK1LqKpokQN3aq3UTwe35xPcW1KyjY5VlccytELhtpShCFUfi|9g3QIiwpFHt0jabsWxyGELg5tPsdXbs5/5JjtzCY7aBf+w46ADNbZQ/rM2wfcsfb|vv/IYdrmKzYGxQ5cJdEHwK1OxYwW6SJRukfgAeLyWhvQR+afnI6/|-----END RSA PRIVATE KEY-----"    # openssl genrsa -out /dev/stdout 2048 | tr '\n' '|' | sed 's/.$//'
+  smtpdDkimSelector: "easy_selector" 
+  smtpdPostfixHotname: ""
+  smtpdRelayHost: null    # "[smtp.gmail.com]:587"
+  smtpdRelayHostUsername: null # "toto@gmail.com"
+  smtpdRelayHostPassword: null # gmail application pssword
+  smtpdPostfixTlsSecurity: null # encrypt
+
+image:
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+service:
+  test-port: 80

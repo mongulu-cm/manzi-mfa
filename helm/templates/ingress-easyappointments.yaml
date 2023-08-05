@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+      cert-manager.io/cluster-issuer: {{ .Values.ingressEasyappointments.clusterIssuer }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  name: easyappointments-ingress
+spec:
+  ingressClassName: {{ .Values.ingressEasyappointments.ingressClassName }}
+  rules:
+    - host: {{ .Values.ingressEasyappointments.host }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: easyappointments-service
+                port:
+                  number: 8888
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - {{ .Values.ingressEasyappointments.host }}
+      secretName: easyappointments-cert

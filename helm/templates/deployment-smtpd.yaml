@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-smtpd
+spec:
+  replicas: {{ .Values.smtpd.replicas }}
+  selector:
+    matchLabels:
+      io.kompose.service: smtpd
+  template:
+    metadata:
+      labels:
+        io.kompose.service: smtpd
+    spec:
+      containers:
+      - env:
+        - name: ALLOWED_SENDER_DOMAINS
+          value: {{ quote .Values.smtpd.smtpdAllowedSenderDomains }}
+        - name: DKIM_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: smtpd-dkim-private-key
+              name: secrets-smtpd
+        - name: DKIM_SELECTOR
+          value: {{ quote .Values.smtpd.smtpdDkimSelector }}
+        - name: CLOUDFLARE_ZONE_ID
+          valueFrom:
+            secretKeyRef:
+              key: cloudflare-zone-id
+              name: secrets-smtpd
+        - name: CLOUDFLARE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: cloudflare-api_key
+              name: secrets-smtpd
+        - name: CLOUDFLARE_DNS_RECORDS
+          value: {{ quote .Values.smtpd.cloudflareDnsRecords }}
+        - name: POSTFIX_HOSTNAME
+          value: {{ quote .Values.smtpd.smtpdPostfixHotname }}
+        - name: POSTFIX_myhostname
+          value: {{ quote .Values.smtpd.smtpdPostfixHotname }}
+        - name: POSTFIX_helo_name
+          value: {{ quote .Values.smtpd.smtpdPostfixHotname }}
+        {{- if .Values.smtpd.smtpdRelayHost }}
+        - name: RELAYHOST
+          value: {{ quote .Values.smtpd.smtpdRelayHost }}
+        {{- end }}
+        {{- if .Values.smtpd.smtpdRelayHost }}
+        - name: RELAYHOST_USERNAME
+          value: {{ quote .Values.smtpd.smtpdRelayHost }}
+        {{- end }}
+        {{- if .Values.smtpd.smtpdRelayHostUsername }}
+        - name: RELAYHOST_PASSWORD
+          value: {{ quote .Values.smtpd.smtpdRelayHostUsername }}
+        {{- end }}
+        {{- if .Values.smtpd.smtpdRelayHostPassword }}
+        - name: POSTFIX_smtp_tls_security_level
+          value: {{ quote .Values.smtpd.smtpdRelayHostPassword }}
+        {{- end }}
+        {{- if .Values.smtpd.smtpdPostfixTlsSecurity }}
+        - name: POSTFIX_smtp_tls_security_level
+          value: {{ quote .Values.smtpd.smtpdPostfixTlsSecurity }}
+        {{- end }}
+        - name: USE_LETSENCRYPT
+          value: '0'
+        - name: USE_CLOUDFLARE_DDNS
+          value: '0'
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ .Values.kubernetesClusterDomain }}
+        image: {{ .Values.smtpd.smtpd.image.repository }}:{{ .Values.smtpd.smtpd.image.tag| default .Chart.AppVersion }}
+        name: smtpd
+        ports:
+        - containerPort: 25
+        resources: {{- toYaml .Values.smtpd.smtpd.resources | nindent 12 }}
+       

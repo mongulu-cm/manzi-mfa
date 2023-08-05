@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: mysql
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  name: deployment-mysql
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      io.kompose.service: mysql
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: mysql
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: root
+                  name: mysql-credentials
+            - name: MYSQL_DATABASE
+              value: {{ .Values.deploymentEasyappointment.dbname }}
+          image: 'mariadb:latest'
+          imagePullPolicy: Always
+          name: mysql
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.mysql.resources | nindent 12 }}
+          securityContext:
+            runAsGroup: 0
+            runAsUser: 0
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: pvc-easyappointments
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: pvc-easyappointments
+          persistentVolumeClaim:
+            claimName: pvc-easyappointments
