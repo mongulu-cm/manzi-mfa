@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   annotations:
       cert-manager.io/cluster-issuer: {{ .Values.ingressEasyappointments.clusterIssuer }}
+      traefik.ingress.kubernetes.io/redirect-entry-point: https
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
   name: easyappointments-ingress

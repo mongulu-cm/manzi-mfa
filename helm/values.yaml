@@ -6,14 +6,14 @@ deploymentEasyappointment:
   dbname: easyappointments
   dbhost: mysql
   debug: 'TRUE'
-  language: english
+  language: french
   baseUrl: 'http://localhost:8888'
 pvcEasyappointments:
   storage: 1Gi
 ingressEasyappointments:
   ingressClassName: traefik
   host: manzi-mfa.mongulu.cm
-  #clusterIssuer: our-ca-issuer
+  clusterIssuer: letsencrypt-prod
 serviceEasyappointment:
   port: 8888
 replicaCount: 1
