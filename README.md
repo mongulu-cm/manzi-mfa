@@ -21,7 +21,7 @@ kubectl apply -f manifests/parameter-store.yml
 ```
 
 ## Ressources
-https://github.com/highcanfly-club/easyappointments-k8s
-https://external-secrets.io/latest/introduction/getting-started/
-https://external-secrets.io/latest/provider/aws-parameter-store/
-https://www.youtube.com/watch?v=DvXkD0f-lhY
+https://github.com/highcanfly-club/easyappointments-k8s  
+https://external-secrets.io/latest/introduction/getting-started/  
+https://external-secrets.io/latest/provider/aws-parameter-store/  
+https://www.youtube.com/watch?v=DvXkD0f-lhY  
