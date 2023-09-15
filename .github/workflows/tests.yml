@@ -1,8 +1,7 @@
 name: Test critical path of the app
 on:
- # schedule:
- #   - cron: '00 00 * * *'
- push:
+  schedule:
+    - cron: '00 00 * * *'
 
 jobs:
   critical-path_test:
