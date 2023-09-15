@@ -1,3 +1,8 @@
+#########################################################################
+# © Ronan LE MEILLAT 2023
+# released under the GPLv3 terms
+#########################################################################
+
 deploymentEasyappointment:
   image: highcanfly/easyappointments
   imageTag: 1.50.0
@@ -11,7 +16,7 @@ deploymentEasyappointment:
 pvcEasyappointments:
   storage: 1Gi
 ingressEasyappointments:
-  ingressClassName: traefik
+  ingressClassName: traefik            # see https://www.haproxy.com/documentation/kubernetes/
   host: manzi-mfa.mongulu.cm
   clusterIssuer: letsencrypt-prod
 serviceEasyappointment:

@@ -31,7 +31,7 @@ spec:
                   name: mysql-credentials
             - name: MYSQL_DATABASE
               value: {{ .Values.deploymentEasyappointment.dbname }}
-          image: 'mariadb:latest'
+          image: 'mysql:latest'
           imagePullPolicy: Always
           name: mysql
           ports:
