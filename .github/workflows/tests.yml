@@ -8,6 +8,8 @@ jobs:
   critical-path_test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # ratchet:actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@7f80679172b057fc5e90d70d197929d454754a5a # ratchet:actions/setup-python@v2
         with:
@@ -15,6 +17,6 @@ jobs:
       - name: Install software
         run: sudo apt-get install -y chromium-browser
       - name: Install Python dependencies
-        run: ls
+        run: pip install -r test/requirements.txt
       - name: "website: check that a user can take an appointment"
         run:  "pytest test/lifeline.py"
