@@ -1,0 +1,20 @@
+name: Test critical path of the app
+on:
+ # schedule:
+ #   - cron: '00 00 * * *'
+ push:
+
+jobs:
+  critical-path_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@7f80679172b057fc5e90d70d197929d454754a5a # ratchet:actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Install software
+        run: sudo apt-get install -y chromium-browser
+      - name: Install Python dependencies
+        run: ls
+      - name: "website: check that a user can take an appointment"
+        run:  "pytest test/lifeline.py"
