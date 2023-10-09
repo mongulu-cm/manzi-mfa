@@ -1,0 +1,1 @@
+sam deploy --parameter-overrides "MssqlServer='$MSSQL_SERVER' MssqlDatabase='$MSSQL_DATABASE' MssqlUser='$MSSQL_USER' MssqlPassword='$MSSQL_PASSWORD' Stage=dev" --config-env dev
