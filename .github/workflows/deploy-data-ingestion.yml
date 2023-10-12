@@ -10,7 +10,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      - name: Deploy Test
+        run: |  
+            sam deploy 
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
