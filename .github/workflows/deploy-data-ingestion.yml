@@ -2,8 +2,6 @@ name: Deploy Lambda with SAM
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   deploy:
