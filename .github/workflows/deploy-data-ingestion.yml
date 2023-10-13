@@ -24,4 +24,4 @@ jobs:
 
       - name: Deploy Lambda function
         run: |  
-            sam deploy --stack-name my-sam-app --parameter-overrides ParameterKey=EASY_APPOINTMENTS_KEY,ParameterValue=EASY_APPOINTMENTS_KEY ParameterKey=DB_HOST,ParameterValue=DB_HOST ParameterKey=DB_USER,ParameterValue=DB_USER ParameterKey=DB_PASSWORD,ParameterValue=DB_PASSWORD ParameterKey=DB_NAME,ParameterValue=DB_NAME
+            sam deploy --stack-name my-sam-app --parameter-overrides ParameterKey=EASY_APPOINTMENTS_KEY,ParameterValue= ${{ secrets.EASY_APPOINTMENTS_KEY }} ParameterKey=DB_HOST,ParameterValue=${{ secrets.DB_HOST }}  ParameterKey=DB_USER,ParameterValue=${{ secrets.DB_USER }}  ParameterKey=DB_PASSWORD,ParameterValue=${{ secrets.DB_PASSWORD }} ParameterKey=DB_NAME,ParameterValue=${{ secrets.DB_NAME }}
