@@ -12,18 +12,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Deploy Test
+      - name: Deploy Lambda
         run: |  
-            sam deploy 
+            cd data_ingestion/data_ingestion/events_tracking
+            echo | pwd
+            sam deploy  --parameter-overrides ParameterKey=EASY_APPOINTMENTS_KEY,ParameterValue=${{ secrets.EASY_APPOINTMENTS_KEY }} ParameterKey=DB_HOST,ParameterValue=${{ secrets.DB_HOST }}  ParameterKey=DB_USER,ParameterValue=${{ secrets.DB_USER }}  ParameterKey=DB_PASSWORD,ParameterValue=${{ secrets.DB_PASSWORD }} ParameterKey=DB_NAME,ParameterValue=${{ secrets.DB_NAME }}
+
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1  # Replace with your desired AWS region
-
-      - name: Deploy Lambda function
-        run: |  
-            cd data_ingestion/data_ingestion/events_tracking
-            echo | pwd
-            sam deploy  --parameter-overrides ParameterKey=EASY_APPOINTMENTS_KEY,ParameterValue=${{ secrets.EASY_APPOINTMENTS_KEY }} ParameterKey=DB_HOST,ParameterValue=${{ secrets.DB_HOST }}  ParameterKey=DB_USER,ParameterValue=${{ secrets.DB_USER }}  ParameterKey=DB_PASSWORD,ParameterValue=${{ secrets.DB_PASSWORD }} ParameterKey=DB_NAME,ParameterValue=${{ secrets.DB_NAME }}
