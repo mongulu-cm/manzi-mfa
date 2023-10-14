@@ -36,7 +36,6 @@ Resources:
           DB_PASSWORD: !Ref SomeVar
           DB_PORT: !Ref SomeVar
           DB_HOST: !Ref SomeVar
-          DB_PASSWORD: !Ref SomeVar
           DB_NAME: !Ref SomeVar
                                                 
   ApplicationResourceGroup:
