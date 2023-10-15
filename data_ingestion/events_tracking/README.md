@@ -67,6 +67,7 @@ Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
 events_tracking$ sam local invoke EventTrackingFunction --event events/event.json
+or sam local invoke EventTrackingFunction -e  events/event.json --env-vars  env/env.json
 ```
 
 The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
