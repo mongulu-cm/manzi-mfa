@@ -26,4 +26,4 @@ jobs:
             ls
             cd data_ingestion/events_tracking
             echo | pwd
-            sam deploy  --parameter-overrides "EASY_APPOINTMENTS_KEY=someValue Key2=someValue Key3=someValue"
+            sam deploy  --parameter-overrides "'EASY_APPOINTMENTS_KEY'=someValue Key2=someValue Key3=someValue"
