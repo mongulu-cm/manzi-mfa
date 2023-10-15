@@ -2,9 +2,28 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   events-tracking
-
   Sample SAM Template for events_tracking
+Parameters:
 
+  # Environment variables
+  easyAppointementsKey:
+    Type: String
+    NoEcho: true
+  dbHost:
+    Type: String
+    NoEcho: true
+  dbPort:
+    Type: String
+    NoEcho: true
+  dbUser:
+    Type: String
+    NoEcho: true
+  dbPassword:
+    Type: String
+    NoEcho: true   
+  dbName:
+    Type: String
+    NoEcho: true    
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -31,12 +50,12 @@ Resources:
             Method: post
       Environment:
         Variables:
-          easyAppointementsKey: !Ref SomeVar
-          dbHost: !Ref SomeVar
-          dbPort: !Ref SomeVar
-          dbUser: !Ref SomeVar
-          dbPassword: !Ref SomeVar
-          dbName: !Ref SomeVar
+          easyAppointementsKey: !Ref easyAppointementsKey
+          dbHost: !Ref dbHost
+          dbPort: !Ref dbPort
+          dbUser: !Ref dbUser
+          dbPassword: !Ref dbPassword
+          dbName: !Ref dbName
                                                 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
