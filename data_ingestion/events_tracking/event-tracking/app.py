@@ -81,7 +81,7 @@ def retrieve_event_detail(event):
     try:
         http = urllib3.PoolManager()
         api_host = 'https://manzi-mfa.mongulu.cm/index.php/api/v1'
-        api_key = os.environ["EASY_APPOINTMENTS_KEY"]
+        api_key = os.environ["easyAppointementsKey"]
         # Headers
         headers = {
         'Authorization': f'Bearer {api_key}',
