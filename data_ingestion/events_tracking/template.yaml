@@ -31,12 +31,12 @@ Resources:
             Method: post
       Environment:
         Variables:
-          EASY_APPOINTMENTS_KEY: !Ref SomeVar
-          DB_USER: !Ref SomeVar
-          DB_PASSWORD: !Ref SomeVar
-          DB_PORT: !Ref SomeVar
-          DB_HOST: !Ref SomeVar
-          DB_NAME: !Ref SomeVar
+          easyAppointementsKey: !Ref SomeVar
+          dbHost: !Ref SomeVar
+          dbPort: !Ref SomeVar
+          dbUser: !Ref SomeVar
+          dbPassword: !Ref SomeVar
+          dbName: !Ref SomeVar
                                                 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
