@@ -60,11 +60,11 @@ def lambda_handler(event, context):
 def connect_to_db():
     try:
 
-        db_user = os.environ["DB_USER"] 
-        db_password = os.environ["DB_PASSWORD"]#get_parameter("/manzi-mfa/postgrel/password")
-        db_host = os.environ["DB_HOST"]
-        db_port = os.environ["DB_PORT"] 
-        db_name = os.environ["DB_NAME"]
+        db_user = os.environ["dbUser"] 
+        db_password = os.environ["dbPassword"]#get_parameter("/manzi-mfa/postgrel/password")
+        db_host = os.environ["db_host"]
+        db_port = os.environ["db_port"] 
+        db_name = os.environ["db_name"]
 
         connection = psycopg2.connect(
             host=db_host,
