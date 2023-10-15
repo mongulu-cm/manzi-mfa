@@ -26,4 +26,4 @@ jobs:
             ls
             cd data_ingestion/events_tracking
             echo | pwd
-            sam deploy  --parameter-overrides "EASY_APPOINTMENTS_KEY='${{ secrets.EASY_APPOINTMENTS_KEY }}' DB_PORT=\'${{ secrets.DB_PORT }}\' Key2=someValue"
+            sam deploy  --parameter-overrides "EASY_APPOINTMENTS_KEY='${{ secrets.EASY_APPOINTMENTS_KEY }}' DB_PORT='${{ secrets.DB_PORT }}' Key2=someValue"
