@@ -3,7 +3,7 @@ import psycopg2
 import os
 import urllib3
 import json
-#import boto3
+##import boto3
 from datetime import datetime
 
 def lambda_handler(event, context):
