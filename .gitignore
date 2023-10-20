@@ -1,1 +1,3 @@
 test/.venv 
+
+data_ingestion/events_tracking/ci_cd/deploy.yml
