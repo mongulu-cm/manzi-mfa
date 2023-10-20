@@ -2,8 +2,10 @@ name: Deploy Lambda with SAM
 
 on:
   push:
-    #paths:
-    #  - 'data_ingestion/events_tracking/**'
+    branches:
+      - main
+    paths:
+      - 'data_ingestion/events_tracking/**'
 
 jobs:
   deploy:
