@@ -17,8 +17,13 @@ spec:
                 secretKeyRef:
                   name: mysql-credentials
                   key: root
+            - name: MYSQL_USER
+              valueFrom:
+               secretKeyRef:
+                 name: mysql
+                 key: mysql-user 
             - name: MYSQL_DATABASE
-              value: easyappointments
+              value: easyappointments              
             - name: MYSQL_HOST
               valueFrom:
                 secretKeyRef:
@@ -40,7 +45,7 @@ spec:
             - |
               current_date=$(date "+%Y-%m-%d")
               snapshot_name="backup-$current_date.sql"
-              mysqldump -h $MYSQL_HOST -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
+              mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
               cat "$snapshot_name"
               aws s3 cp "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
           restartPolicy: OnFailure
