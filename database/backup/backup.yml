@@ -46,6 +46,5 @@ spec:
               current_date=$(date "+%Y-%m-%d")
               snapshot_name="backup-$current_date.sql"
               mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
-              cat "$snapshot_name"
               aws s3 cp "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
           restartPolicy: OnFailure
