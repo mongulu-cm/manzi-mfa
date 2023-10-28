@@ -21,7 +21,7 @@ jobs:
     - name: Build and push Docker image
       run: |
         docker buildx create --use
-        docker buildx build -t tsafacjo/mysql-dumb-aws:latest  -f database/backup/docker  --platform linux/arm64 .
+        docker buildx build -t tsafacjo/mysql-dumb-aws:latest  -f database/backup/docker  --platform linux/arm64 
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker push your-docker-registry/your-image-name:latest
       env:
