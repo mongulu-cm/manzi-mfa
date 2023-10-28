@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/mysqlbackup_on_s3
     paths:
       - 'database/**'
 jobs:
