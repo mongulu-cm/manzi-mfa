@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/ingestion
     paths:
       - 'data_ingestion/events_tracking/**'
 
