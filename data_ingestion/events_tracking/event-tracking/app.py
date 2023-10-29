@@ -56,8 +56,10 @@ def lambda_handler(event, context):
         if connection:
             connection.close()            
 
+
 def connect_to_db():
     try:
+
         db_user = os.environ["dbUser"] 
         db_password = os.environ["dbPassword"]#get_parameter("/manzi-mfa/postgrel/password")
         db_host = os.environ["db_host"]
