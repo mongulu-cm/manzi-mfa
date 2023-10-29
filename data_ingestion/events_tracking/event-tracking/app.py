@@ -3,7 +3,7 @@ import psycopg2
 import os
 import urllib3
 import json
-##import boto3
+
 from datetime import datetime
 
 def lambda_handler(event, context):
@@ -27,7 +27,6 @@ def lambda_handler(event, context):
 
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
-
     # try:
     #     ip = requests.get("http://checkip.amazonaws.com/")
     # except requests.RequestException as e:
@@ -35,7 +34,6 @@ def lambda_handler(event, context):
     #     print(e)
 
     #     raise e
-
 
     try:
         
@@ -56,10 +54,8 @@ def lambda_handler(event, context):
         if connection:
             connection.close()            
 
-
 def connect_to_db():
     try:
-
         db_user = os.environ["dbUser"] 
         db_password = os.environ["dbPassword"]#get_parameter("/manzi-mfa/postgrel/password")
         db_host = os.environ["db_host"]
@@ -114,7 +110,6 @@ def retrieve_event_detail(event):
         customer_url = f'{api_host}/customers/{customer_id}'
         response = http.request('GET', customer_url, headers=headers)
         customer = json.loads(response.data.decode('utf-8'))
-
 
         return {
             "customer_email": customer['email'],
