@@ -111,7 +111,6 @@ def retrieve_event_detail(event):
         response = http.request('GET', customer_url, headers=headers)
         customer = json.loads(response.data.decode('utf-8'))
 
-
         return {
             "customer_email": customer['email'],
             "customer_name": customer["firstName"] + " " + customer["lastName"],
