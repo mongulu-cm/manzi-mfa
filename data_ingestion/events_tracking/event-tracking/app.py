@@ -62,9 +62,9 @@ def connect_to_db():
 
         db_user = os.environ["dbUser"] 
         db_password = os.environ["dbPassword"]#get_parameter("/manzi-mfa/postgrel/password")
-        db_host = os.environ["db_host"]
-        db_port = os.environ["db_port"] 
-        db_name = os.environ["db_name"]
+        db_host = os.environ["dbHost"]
+        db_port = os.environ["dbPort"] 
+        db_name = os.environ["dbName"]
 
         connection = psycopg2.connect(
             host=db_host,
