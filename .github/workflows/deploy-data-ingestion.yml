@@ -4,8 +4,11 @@ on:
   push:
     branches:
       - main
+      - feat/save_main
     paths:
       - 'data_ingestion/events_tracking/**'
+      - '.github/workflows/deploy-data-ingestion.yml'
+
 
 jobs:
   deploy:
