@@ -24,7 +24,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1  # Replace with your desired AWS region
-          
+      - name: Set up Python
+        uses: actions/setup-python@7f80679172b057fc5e90d70d197929d454754a5a # ratchet:actions/setup-python@v2
+        with:
+          python-version: "3.11"
+      - uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # ratchet:actions/cache@v2        
       - name: Deploy Lambda
         run: |  
             echo | pwd
