@@ -24,7 +24,7 @@ jobs:
         pwd
         ls
         docker buildx create --use
-        docker  build -t tsafacjo/mysql-dumb-aws:latest   --platform linux/arm64,linux/amd64  database/backup/docker 
+        docker  build -t tsafacjo/mysql-dumb-aws:latest   --platform linux/amd64  database/backup/docker 
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker push your-docker-registry/your-image-name:latest
       env:
