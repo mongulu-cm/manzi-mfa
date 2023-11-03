@@ -1,0 +1,25 @@
+name: Pull and Run Docker Container CI
+
+on:
+  push:
+    branches: 
+    - feat/scraper_jobs_from_indeed_v1
+  pull_request:
+    branches:
+    - feat/scraper_jobs_from_indeed_v1
+
+jobs:
+  run-docker:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check Out Repo
+      uses: actions/checkout@v2
+
+    - name: Pull Docker image
+      run: docker pull tsafacjo/job-scraper:0.1 
+
+    - name: Run Docker container
+      run: docker run --name mza-scraper tsafacjo/job-scraper:0.1 
+      # You can add any environment variables or mount volumes as needed.
+
