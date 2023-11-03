@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mfa-scraper
+spec:
+  schedule: "0 0 * * *"  
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mfa-scraper
+            image: tsafacjo/job-scraper:0.1
+            env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: root
+            - name: MYSQL_USER
+              valueFrom:
+               secretKeyRef:
+                 name: mysql
+                 key: mysql-user 
+            - name: MYSQL_DATABASE
+              value: easyappointments              
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-host             
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secret
+                  key: access-key
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secret
+                  key: secret-access-key
+          restartPolicy: OnFailure
