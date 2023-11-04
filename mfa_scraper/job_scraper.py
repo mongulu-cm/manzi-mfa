@@ -20,7 +20,7 @@ driver = webdriver.Chrome(
 )
 
 # open the target page  in the browser
-driver.get("https://www.indeed.com/jobs?q=data&l=&vjk=e90a1cb0b8b2d848")
+driver.get("https://www.indeed.com/jobs?q=data&fromage=1&vjk=2240c291e85a94a1")
 # set the window size to make sure pages
 # will not be rendered in responsive mode
 driver.set_window_size(1920, 1080)
@@ -196,5 +196,6 @@ output = {
 }
 
 # export it to JSON
-with open("jobs.json", "w") as file:
+current_date = datetime.now().strftime('%Y-%m-%d')
+with open(f"jobs/job-{current_date}.json", "w") as file:
     json.dump(output, file, indent=4)
