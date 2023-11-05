@@ -119,9 +119,11 @@ def retrieve_event_detail(event):
         return {
             "customer_email": customer['email'],
             "customer_name": customer["firstName"] + " " + customer["lastName"],
+            "customer_phone_number": customer["phoneNumber"],
             "service_name": service["name"],
             "provider_name": provider["firstName"] + " " + provider["lastName"],
             "provider_email": provider["email"],
+            "provider_phone_number": provider["phoneNumber"],
             "start_date": start_date,
             "end_date": end_date
         }
@@ -143,14 +145,16 @@ def insert_event_record(connection, event):
            event_details["provider_name"],
            event_details["provider_email"],
            event_details["start_date"],
-           event_details["end_date"]
+           event_details["end_date"],
+           event_details["customer_phone_number"],
+           event_details["provider_phone_number"]
         )
 
         print(record_to_insert)
         # Define the PostgreSQL INSERT query
         postgres_insert_query = """ INSERT INTO manzi_mfa.user_events(
-             action,created_at, customer_email, customer_name, service_name, provider_name, provider_email, start_date,end_date)
-            VALUES (%s, %s,  %s, %s, %s, %s, %s, %s, %s)"""                         
+             action,created_at, customer_email, customer_name, service_name, provider_name, provider_email, start_date,end_date, customer_phone_number, provider_phone_number)
+            VALUES (%s, %s,  %s, %s, %s, %s, %s, %s, %s, %s, %s)"""                         
         print(postgres_insert_query.format(record_to_insert))
         cursor.execute(postgres_insert_query, record_to_insert)
 
