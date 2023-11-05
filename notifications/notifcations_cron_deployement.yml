@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sms-notifications
+spec:
+  schedule: "0 */2 * * *"  
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: sms-notifications
+            image: tsafacjo/sms_notifications:0.6
+            env:
+            - name: dbUser
+              valueFrom:
+               secretKeyRef:
+                 name: postgres
+                 key: dbUser 
+            - name: dbPassword 
+              valueFrom:
+               secretKeyRef:
+                 name: postgres
+                 key: dbPassword 
+            - name: dbHost
+              valueFrom:
+               secretKeyRef:
+                 name: postgres
+                 key: dbHost
+            - name: dbPort
+              valueFrom:
+               secretKeyRef:
+                 name: postgres
+                 key: dbPort 
+            - name: dbName
+              valueFrom:
+               secretKeyRef:
+                 name: postgres
+                 key: dbName                                                                             
+            - name: API_KEY_HTTPSMS
+              valueFrom:
+                secretKeyRef:
+                  name: httpsms
+                  key: API_KEY_HTTPSMS
+            - name: MONGULU_NUMBER
+              valueFrom:
+                secretKeyRef:
+                  name: httpsms
+                  key: MONGULU_NUMBER
+          restartPolicy: OnFailure

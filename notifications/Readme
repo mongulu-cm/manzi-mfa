@@ -1,0 +1,5 @@
+docker build -t tsafacjo/sms_notifications --platform linux/arm64 .
+docker tag tsafacjo/sms_notifications  tsafacjo/sms_notifications:0.1
+docker push tsafacjo/sms_notifications:0.1
+
+kubectl create -f C:\Users\DELL\Documents\Workspace\mongulu\notifications\notifcations_cron_deployement.yml --namespace easyappointments
