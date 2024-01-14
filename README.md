@@ -17,6 +17,22 @@ helm upgrade cert-manager jetstack/cert-manager --namespace cert-manager --creat
 kubectl apply -f manifests/issuer-acme.yml
 helm upgrade external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
 kubectl apply -f manifests/parameter-store.yml
+
+NAMESPACE="arc-systems"
+helm install arc \
+    --namespace "${NAMESPACE}" \
+    --create-namespace \
+    oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
+NAMESPACE="arc-runners"
+INSTALLATION_NAME="arc-runner-set"
+GITHUB_CONFIG_URL="https://github.com/mongulu-cm/manzi-mfa"
+helm upgrade "${INSTALLATION_NAME}" \
+    --namespace "${NAMESPACE}" \
+    --set githubConfigUrl="${GITHUB_CONFIG_URL}" \
+    --set githubConfigSecret=github-arc-secret \
+    --set containerMode.type=dind \
+    oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+kubectl create secret generic github-arc-secret --namespace=arc-runners --from-literal=github_token=<TOKEN>
 kubectl apply -f manifests/diun.yml
 ```
 

@@ -10,22 +10,21 @@ on:
       - '.github/workflows/deploy_mysql_dumb_image.yml'
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: arc-runner-set
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
 
     - name: Build and push Docker image
       run: |
         pwd
         ls
-        docker buildx create --use
         docker  build -t tsafacjo/mysql-dumb-aws:latest   --platform  linux/arm/v7  database/backup/docker 
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push your-docker-registry/your-image-name:latest
+        echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin
+        docker push tsafacjo/mysql-dumb-aws:latest
       env:
         DOCKER_CLI_AGGREGATE: 1
