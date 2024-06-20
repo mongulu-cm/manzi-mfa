@@ -7,17 +7,23 @@
 
 
 ## Deployment
+
+Firstly, install all required tools:
 ```sh
 helm repo add jetstack https://charts.jetstack.io
+helm repo add external-secrets https://charts.external-secrets.io
 helm update
 helm upgrade cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
 kubectl apply -f manifests/issuer-acme.yml
-
-kubectl create namespace easyappointments
-helm install easyappointments . -n easyappointments
-helm repo add external-secrets https://charts.external-secrets.io
-helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
+helm upgrade external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
 kubectl apply -f manifests/parameter-store.yml
+kubectl apply -f manifests/diun.yml
+```
+
+then start the application:
+```sh
+kubectl create namespace easyappointments
+helm upgrade easyappointments ./helm -n easyappointments
 ```
 
 ## Ressources
