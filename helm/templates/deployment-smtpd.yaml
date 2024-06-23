@@ -11,6 +11,9 @@ spec:
     metadata:
       labels:
         io.kompose.service: smtpd
+      annotations:
+        diun.enable: "true"
+        diun.watch_repo: "true"
     spec:
       containers:
       - env:

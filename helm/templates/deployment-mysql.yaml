@@ -21,6 +21,8 @@ spec:
     metadata:
       labels:
         io.kompose.service: mysql
+      annotations:
+        diun.enable: "true"
     spec:
       containers:
         - env:

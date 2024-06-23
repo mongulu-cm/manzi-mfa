@@ -22,6 +22,9 @@ spec:
     metadata:
       labels:
         app: easyappointments-server
+      annotations:
+        diun.watch_repo: "true"
+        diun.enable: "true"
     spec:
       containers:
         - env:
