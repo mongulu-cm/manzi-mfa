@@ -36,7 +36,7 @@ smtpd:
     port: 25
     targetPort: 25
   postfixHostname: ""
-  replicas: 1
+  replicas: 2
   smtpd:
     image:
       repository: highcanfly/smtp-relay
