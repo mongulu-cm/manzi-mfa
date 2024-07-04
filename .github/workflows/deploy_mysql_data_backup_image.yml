@@ -1,0 +1,34 @@
+name: Build and push data backup image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'database/**'
+      - '.github/workflows/deploy_mysql_dumb_image.yml'
+
+jobs:
+  build:
+    runs-on: arc-runner-set
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+
+    - name: Build and push Docker image
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        docker build -t mongulu/mysql-data-backup:latest --platform linux/arm/v7 database/backup/docker
+        docker push mongulu/mysql-data-backup:latest
