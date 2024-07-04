@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feat/mysqlbackup_on_s3
     paths:
       - 'database/**'
       - '.github/workflows/deploy_mysql_dumb_image.yml'

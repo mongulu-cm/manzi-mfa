@@ -18,6 +18,7 @@ kubectl apply -f manifests/issuer-acme.yml
 helm upgrade external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
 kubectl apply -f manifests/parameter-store.yml
 kubectl apply -f manifests/diun.yml
+kubectl apply -f manifests/database-backup.yml
 
 NAMESPACE="arc-systems"
 helm install arc \

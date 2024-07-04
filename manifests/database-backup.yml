@@ -2,15 +2,20 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: backup-manzi-mfa-db
+  namespace: easyappointments
 spec:
-  schedule: "0 0 * * *"  
+  schedule: "0 0 * * *" 
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       template:
         spec:
+          nodeSelector:
+            node-type: data-access
           containers:
           - name: mysql-dump-container
-            image: tsafacjo/mysql-dumb-aws:0.3
+            image: mongulu/mysql-data-backup:latest
             env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -18,26 +23,20 @@ spec:
                   name: mysql-credentials
                   key: root
             - name: MYSQL_USER
-              valueFrom:
-               secretKeyRef:
-                 name: mysql
-                 key: mysql-user 
+              value: root
             - name: MYSQL_DATABASE
               value: easyappointments              
             - name: MYSQL_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: mysql
-                  key: mysql-host             
+              value: mysql             
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: aws-secret
+                  name:  awssm-secret
                   key: access-key
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: aws-secret
+                  name:  awssm-secret
                   key: secret-access-key
 
             command: ["sh", "-c"]
@@ -45,6 +44,9 @@ spec:
             - |
               current_date=$(date "+%Y-%m-%d")
               snapshot_name="backup-$current_date.sql"
+              echo $MYSQL_HOST
+              echo $MYSQL_ROOT_PASSWORD
+              echo $MYSQL_DATABASE
               mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
               aws s3 cp "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
           restartPolicy: OnFailure
