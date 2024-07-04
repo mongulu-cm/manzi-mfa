@@ -17,6 +17,7 @@ helm upgrade cert-manager jetstack/cert-manager --namespace cert-manager --creat
 kubectl apply -f manifests/issuer-acme.yml
 helm upgrade external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
 kubectl apply -f manifests/parameter-store.yml
+kubectl apply -f manifests/diun.yml
 
 NAMESPACE="arc-systems"
 helm install arc \
@@ -33,7 +34,6 @@ helm upgrade "${INSTALLATION_NAME}" \
     --set containerMode.type=dind \
     oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 kubectl create secret generic github-arc-secret --namespace=arc-runners --from-literal=github_token=<TOKEN>
-kubectl apply -f manifests/diun.yml
 ```
 
 then start the application:
