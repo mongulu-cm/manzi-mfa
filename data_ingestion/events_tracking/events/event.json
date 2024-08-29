@@ -1,7 +1,7 @@
 {
   "body":{"action":"appointment_save","payload":{"id":14,"create_datetime":"2023-10-06 22:33:08","update_datetime":"2023-10-06 22:33:08","delete_datetime":null,"book_datetime":"2023-10-06 22:33:08","start_datetime":"2023-10-07 10:00:00","end_datetime":"2023-10-07 11:00:00","location":"En ligne","notes":"test","hash":"HZLjEnuYDOWd_","color":"#acbefb","status":"Booked","is_unavailability":false,"id_users_provider":16,"id_users_customer":18,"id_services":1,"id_google_calendar":null}},
-  "resource": "/hello",
-  "path": "/hello",
+  "resource": "/events",
+  "path": "/events",
   "httpMethod": "GET",
   "isBase64Encoded": false,
   "queryStringParameters": {
@@ -53,8 +53,8 @@
       "userAgent": "Custom User Agent String",
       "user": null
     },
-    "path": "/prod/hello",
-    "resourcePath": "/hello",
+    "path": "/prod/events",
+    "resourcePath": "/events",
     "httpMethod": "POST",
     "apiId": "1234567890",
     "protocol": "HTTP/1.1"
