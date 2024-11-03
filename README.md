@@ -19,6 +19,8 @@ helm upgrade external-secrets external-secrets/external-secrets -n external-secr
 kubectl apply -f manifests/parameter-store.yml
 kubectl apply -f manifests/diun.yml
 kubectl apply -f manifests/database-backup.yml
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 NAMESPACE="arc-systems"
 helm install arc \
