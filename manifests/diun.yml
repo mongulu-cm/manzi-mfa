@@ -9,14 +9,12 @@ kind: ClusterRole
 metadata:
   name: diun
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-    verbs:
-      - get
-      - watch
-      - list
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "patch", "update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -66,6 +64,10 @@ spec:
           image: crazymax/diun:latest
           imagePullPolicy: Always
           args: ["serve"]
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "apk add kubectl"]
           env:
             - name: TZ
               value: "Europe/Paris"
@@ -87,6 +89,10 @@ spec:
               value: "POST"
             - name: DIUN_NOTIF_WEBHOOK_TIMEOUT
               value: "10s"
+            - name: DIUN_NOTIF_SCRIPT_CMD
+              value: "kubectl"
+            - name: DIUN_NOTIF_SCRIPT_ARGS
+              value: "rollout,restart,deployment,deployment-mysql,-n,easyappointments"
           volumeMounts:
             - mountPath: "/data"
               name: "data"
