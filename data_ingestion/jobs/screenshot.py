@@ -8,6 +8,24 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from tqdm import tqdm
 from PIL import Image
+import platform
+from openai import OpenAI
+import json
+import base64
+from pydantic import BaseModel
+from tabulate import tabulate
+
+class Job(BaseModel):
+    title: str
+    location: str
+
+class Jobs(BaseModel):
+    jobs: list[Job]
+
+system_prompt = '''
+    You are an agent specialized in checking if an image contains jobs title and location. If it's the case, you are able to extract them all.
+    You will be provided an image, and your goal is to extract all jobs title and location if exists.
+'''
 
 def get_site_list(filename):
     list = []
@@ -46,6 +64,7 @@ def get_jobs(url, output_path, driver_path):
 
     # List to store partial screenshots
     screenshots = []
+    all_jobs = []
 
     # Scroll and capture screenshots
     for y_position in tqdm(range(0, total_height, viewport_height), desc="Scrolling"):
@@ -54,6 +73,11 @@ def get_jobs(url, output_path, driver_path):
         screenshot_path = f"temp_{y_position}.png"
         driver.save_screenshot(screenshot_path)
         screenshots.append(screenshot_path)
+        jobs_data = analyze_screenshot(screenshot_path)
+        if jobs_data:
+            jobs_dicts = [{"title": job.title, "location": job.location} for job in jobs_data.jobs]
+            all_jobs.extend(jobs_dicts)
+
 
     # Close the driver
     driver.quit()
@@ -65,6 +89,45 @@ def get_jobs(url, output_path, driver_path):
     # Clean up temporary images
     for path in screenshots:
         os.remove(path)
+
+    print(tabulate(all_jobs, headers="keys", tablefmt="grid"))
+
+
+def analyze_screenshot(image_path):
+    """Analyse une capture d'écran pour extraire les titres et lieux des emplois."""
+    client = OpenAI()
+
+    with open(image_path, "rb") as image_file:
+        response = client.beta.chat.completions.parse(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": system_prompt
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64.b64encode(image_file.read()).decode()}"
+                            }
+                        }
+                    ]
+                }
+            ],
+            response_format=Jobs,
+        )
+
+
+        message = response.choices[0].message
+        if message.parsed:
+            print(message.parsed)
+            return message.parsed
+        else:
+            print(message.refusal)
+            return []
 
 def stitch_images(image_paths):
     """Stitch multiple images vertically into a single image."""
@@ -85,7 +148,14 @@ def stitch_images(image_paths):
 #driver.save_screenshot(r"C:\Users\Joyce Pascale\PyProjects\manzi-mfa\data_ingestion\jobs\screenshot1.png")
 #driver.quit()
 
-driver = 'C:\Program Files\Google\chromedriver-win64\chromedriver.exe'
+# Déterminer le chemin du driver en fonction du système d'exploitation
+if platform.system() == 'Windows':
+    driver = r'C:\Program Files\Google\chromedriver-win64\chromedriver.exe'  # Notez le 'r' pour raw string
+elif platform.system() == 'Darwin':  # Darwin est le nom du système pour macOS
+    driver = '/opt/homebrew/bin/chromedriver'
+else:
+    driver = '/usr/local/bin/chromedriver'  # Pour Linux
+
 output_path = r"C:\Users\Joyce Pascale\PyProjects\manzi-mfa\data_ingestion\jobs\screenshot1.png"
 url = get_site_list("list.txt")[0]
 
