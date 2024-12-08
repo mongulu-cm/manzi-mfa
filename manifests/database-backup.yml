@@ -4,7 +4,7 @@ metadata:
   name: backup-manzi-mfa-db
   namespace: easyappointments
 spec:
-  schedule: "0 0 * * *" 
+  schedule: "0 0 * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -25,9 +25,9 @@ spec:
             - name: MYSQL_USER
               value: root
             - name: MYSQL_DATABASE
-              value: easyappointments              
+              value: easyappointments
             - name: MYSQL_HOST
-              value: mysql             
+              value: mysql
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -42,11 +42,28 @@ spec:
             command: ["sh", "-c"]
             args:
             - |
+              apt update &&apt install -y curl
+              send_notification() {
+                message=$1
+                curl -X POST -H "Content-Type: application/json" \
+                  -d "{\"text\":\"❌ $message\"}" \
+                  https://eoqcnomqns2z3tq.m.pipedream.net
+              }
+
+              # Fonction pour gérer les erreurs
+              handle_error() {
+                error_message=$1
+                send_notification "$error_message"
+                exit 1
+              }
+
               current_date=$(date "+%Y-%m-%d")
               snapshot_name="backup-$current_date.sql"
-              echo $MYSQL_HOST
-              echo $MYSQL_ROOT_PASSWORD
-              echo $MYSQL_DATABASE
-              mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
-              aws s3 cp "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
+
+              {
+                mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
+                aws s3 cp "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
+              } || {
+                handle_error "Échec de la sauvegarde MySQL pour $MYSQL_DATABASE le $current_date"
+              }
           restartPolicy: OnFailure
