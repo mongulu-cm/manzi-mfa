@@ -3,3 +3,7 @@ requests
 pandas
 openai
 selenium
+typer
+pydantic
+Pillow
+tabulate
