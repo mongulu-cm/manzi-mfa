@@ -44,6 +44,7 @@ https://www.example.com/jobs,PAGINATION,810,2089
 
 Or specify the URL and scraper type directly:
 ```bash
-python main.py scrape --url <URL> --type <SCROLL>
-python main.py scrape --url <URL> --type <PAGINATION> --x <X_POS_NEXT_BUTTON> --y <Y_POS_NEXT_BUTTON>
+export OPENAI_API_KEY=xxxxxxxx # On Windows use $env:OPENAI_API_KEY = "xxxxxxxx"
+python main.py scrape --url <URL> --type scroll
+python main.py scrape --url <URL> --type pagination --x <X_POS_NEXT_BUTTON> --y <Y_POS_NEXT_BUTTON>
 ```

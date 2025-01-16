@@ -3,3 +3,8 @@ https://www.teads.com/teads-careers/job-openings/,PAGINATION,810,2089
 https://sii-group.com/fr-FR/offers,PAGINATION,810,2089
 https://aneo.recruitee.com/nos-offres
 https://splio.teamtailor.com/jobs
+https://www.audensiel.com/nous-rejoindre
+https://www.dior.com/carrieres/list.html?searchCriteria[0][key]=LOV10&searchCriteria[0][values][]=8025&searchCriteria[1][key]=tech._de_l%27information/syst%C3%A8mes_d%27information&searchCriteria[1][values][]=on&searchCriteria[2][key]=LOV13&searchCriteria[2][values][]=8053&searchCriteria[3][key]=france&searchCriteria[3][values][]=on
+https://www.extia-group.com/join-us?page=1&domains=2&locations=1
+https://jobs.lever.co/sfeir?location=Paris&department=Engineering
+https://wiremind-1714146283.teamtailor.com/jobs?department=TECH&split_view=true&query=
