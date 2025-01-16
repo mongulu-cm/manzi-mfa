@@ -11,9 +11,11 @@ import time
 import os
 
 class ScrollScraper(JobScraper):
-    def __init__(self, url: str, driver_path: str):
+    def __init__(self, url: str, driver_path: str, cookie_x: int = None, cookie_y: int = None):
         self.url = url
         self.driver_path = driver_path
+        self.cookie_x = cookie_x
+        self.cookie_y = cookie_y
 
     def scrape(self) -> List[Job]:
         driver = setup_chrome_driver(self.driver_path)
@@ -24,14 +26,11 @@ class ScrollScraper(JobScraper):
             driver.get(self.url)
             time.sleep(2)
 
-            # Gestion des cookies
-            try:
-                cookie_decline_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.ID, "CybotCookiebotDialogBodyButtonDecline"))
-                )
-                cookie_decline_button.click()
-            except:
-                print("Cookie decline button not found or not clickable.")
+            if self.cookie_x is not None and self.cookie_y is not None:
+                from selenium.webdriver import ActionChains
+                ActionChains(driver).move_by_offset(self.cookie_x, self.cookie_y).click().perform()
+            else:
+                print("Cookie x,y not provided, skipping cookie click.")
 
             scroll_and_extract_jobs(driver, all_jobs, screenshots)
 

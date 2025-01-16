@@ -10,11 +10,13 @@ import time
 import os
 
 class PaginationScraper(JobScraper):
-    def __init__(self, url: str, driver_path: str, next_button_x: int, next_button_y: int):
+    def __init__(self, url: str, driver_path: str, next_button_x: int, next_button_y: int, cookie_x: int = None, cookie_y: int = None):
         self.url = url
         self.driver_path = driver_path
         self.next_button_x = next_button_x
         self.next_button_y = next_button_y
+        self.cookie_x = cookie_x
+        self.cookie_y = cookie_y
 
     def scrape(self) -> List[Job]:
         driver = setup_chrome_driver(self.driver_path)
@@ -24,6 +26,12 @@ class PaginationScraper(JobScraper):
         try:
             driver.get(self.url)
             time.sleep(2)
+
+            if self.cookie_x is not None and self.cookie_y is not None:
+                from selenium.webdriver import ActionChains
+                ActionChains(driver).move_by_offset(self.cookie_x, self.cookie_y).click().perform()
+            else:
+                print("Cookie x,y not provided, skipping cookie click.")
 
             last_page_content = ""
             page_count = 0

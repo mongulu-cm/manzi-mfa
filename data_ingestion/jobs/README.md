@@ -32,19 +32,19 @@ python main.py positions --url <URL>
 
 ### Scrape Jobs
 
-To get the coordinates of an element by clicking on it:
+To scrape jobs using a CSV file:
 ```bash
 python main.py scrape --csv <CSV_FILE>
 ```
-with sample csv file that follows structure:
-```bash
-https://www.example.com/jobs,SCROLL
-https://www.example.com/jobs,PAGINATION,810,2089
+with a sample CSV file that follows the structure:
+```plaintext
+https://www.example.com/jobs,SCROLL, , ,100,200
+https://www.example.com/jobs,PAGINATION,810,2089,100,200
 ```
 
 Or specify the URL and scraper type directly:
 ```bash
 export OPENAI_API_KEY=xxxxxxxx # On Windows use $env:OPENAI_API_KEY = "xxxxxxxx"
-python main.py scrape --url <URL> --type scroll
-python main.py scrape --url <URL> --type pagination --x <X_POS_NEXT_BUTTON> --y <Y_POS_NEXT_BUTTON>
+python main.py scrape --url <URL> --type scroll --cookiex <COOKIE_X> --cookiey <COOKIE_Y>
+python main.py scrape --url <URL> --type pagination --x <X_POS_NEXT_BUTTON> --y <Y_POS_NEXT_BUTTON> --cookiex <COOKIE_X> --cookiey <COOKIE_Y>
 ```

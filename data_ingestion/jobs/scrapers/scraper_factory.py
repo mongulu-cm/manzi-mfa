@@ -11,9 +11,19 @@ class ScraperFactory:
     @staticmethod
     def create_scraper(scraper_type: ScraperType, url: str, driver_path: str, **kwargs) -> JobScraper:
         if scraper_type == ScraperType.SCROLL:
-            return ScrollScraper(url, driver_path)
+            return ScrollScraper(
+                url,
+                driver_path,
+                cookie_x=kwargs.get('cookie_x'),
+                cookie_y=kwargs.get('cookie_y')
+            )
         elif scraper_type == ScraperType.PAGINATION:
-            return PaginationScraper(url, driver_path,
-                                   kwargs.get('next_button_x'),
-                                   kwargs.get('next_button_y'))
+            return PaginationScraper(
+                url,
+                driver_path,
+                kwargs.get('next_button_x'),
+                kwargs.get('next_button_y'),
+                cookie_x=kwargs.get('cookie_x'),
+                cookie_y=kwargs.get('cookie_y')
+            )
         raise ValueError(f"Type de scraper non supporté: {scraper_type}")
