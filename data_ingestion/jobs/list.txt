@@ -1,3 +1,5 @@
 https://www.ivalua.com/company/careers/,SCROLL
 https://www.teads.com/teads-careers/job-openings/,PAGINATION,810,2089
 https://sii-group.com/fr-FR/offers,PAGINATION,810,2089
+https://aneo.recruitee.com/nos-offres
+https://splio.teamtailor.com/jobs
