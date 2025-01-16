@@ -17,12 +17,12 @@ def get_site_list(filename):
     return list
 
 def analyze_screenshot(image_path):
-    """Analyse une capture d'écran pour extraire les titres et lieux des emplois."""
+    """Analyse une capture d'écran pour extraire les titres et lieux des emplois même s'il semble y avoir des doublons."""
     client = OpenAI()
 
     with open(image_path, "rb") as image_file:
         response = client.beta.chat.completions.parse(
-            model="gpt-4o-mini-2024-07-18",
+            model="gpt-4o-2024-11-20",
             messages=[
                 {
                     "role": "user",
