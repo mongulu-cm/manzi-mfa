@@ -22,7 +22,7 @@ def analyze_screenshot(image_path):
 
     with open(image_path, "rb") as image_file:
         response = client.beta.chat.completions.parse(
-            model="gpt-4o-2024-11-20",
+            model="gpt-4o-mini-2024-07-18",
             messages=[
                 {
                     "role": "user",
