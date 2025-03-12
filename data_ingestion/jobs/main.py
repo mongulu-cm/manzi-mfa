@@ -1,8 +1,10 @@
 import typer
+import json
 from typing import Optional
 from scrapers.scraper_factory import ScraperFactory, ScraperType
 from utils.functions import get_site_list
 from utils.selenium import get_driver_path, get_positions
+from utils.db import conn, store_job, store_company, read_data
 from tabulate import tabulate
 
 app = typer.Typer(
@@ -55,6 +57,42 @@ def scrape(
 
         execute_scraper(url, scraper_type, x_pos, y_pos, cookie_x, cookie_y)
 
+@app.command()
+def store(
+    url: Optional[str] = typer.Option(None, "--url", help="URL du site carrières"),
+    name: Optional[str] = typer.Option(None, "--nom", help="Nom entreprise"),
+    contact: Optional[str] = typer.Option(None, "--contact", help="Contact au sein du collectif"),
+    scraper_type: Optional[str] = typer.Option(None, "--type", help="Type de scraper (SCROLL/PAGINATION)"),
+    metadata: Optional[str] = typer.Option(None, "--metadata", help="JSON contenant x_pos, y_pos, cookie_x, cookie_y")
+):
+    """
+    Ajouter une nouvelle entreprise dans la base.
+    """
+    if not url:
+        typer.echo("Error: --url est requis pour l'enregistrment")
+        raise typer.Exit(1)
+    if not name:
+        typer.echo("Error: --nom est requis pour l'enregistrment")
+        raise typer.Exit(1)
+    if not contact:
+        typer.echo("Error: --contact est requis pour l'enregistrment")
+        raise typer.Exit(1)
+    if not scraper_type:
+        typer.echo("Error: --type est requis pour l'enregistrment")
+        raise typer.Exit(1)
+    if not metadata:
+        typer.echo("Error: --metadata est requis pour l'enregistrment")
+        raise typer.Exit(1)
+    else:
+        try:
+            metadata_dict = json.loads(metadata) if metadata else {}
+        except json.JSONDecodeError:
+            typer.echo("Erreur : Le format du JSON est invalide.", err=True)
+            raise typer.Exit(code=1)
+    
+    database = conn()
+    store_company(database, name, contact, url, scraper_type, metadata)
+
 def execute_scraper(
     url: str,
     scraper_type: ScraperType,
@@ -64,7 +102,7 @@ def execute_scraper(
     cookie_y: Optional[int] = None
 ):
     """
-    Exécute le scraper avec les paramètres donnés.
+    Exécute le scraper avec les paramètres donnés et enregistre dans la base.
     """
     scraper = ScraperFactory.create_scraper(
         scraper_type,
@@ -75,7 +113,13 @@ def execute_scraper(
         cookie_x=cookie_x,
         cookie_y=cookie_y
     )
+    database = conn()
+    print(database.tables)
+    print("#############################################")
     jobs = scraper.scrape()
+    for job in jobs:
+        print(job)
+        store_job(database, _, job['title'], job['location']) # Comment gerer le nom de l'entreprise?
     print(tabulate(jobs, headers="keys", tablefmt="grid"))
 
 if __name__ == "__main__":

@@ -30,6 +30,14 @@ To get the coordinates of an element by clicking on it:
 python main.py positions --url <URL>
 ```
 
+### Store new company
+
+To store a new company in the database
+```bash
+export DATABASE_URL=xxxxxxxx # On Windows use $env:DATABASE_URL = "xxxxxxxx"
+python main.py store --url '<URL>' --nom '<NAME>' --contact '<CONTACT NAME>' --type '<TYPE SCRAPPER>' --metadata '{\"x_pos\": x_pos, \"y_pos\": y_pos, \"cookie_x\": cookie_x, \"cookie_y\": cookie_y}'
+```
+
 ### Scrape Jobs
 
 To scrape jobs using a CSV file:

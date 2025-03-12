@@ -177,5 +177,5 @@ cython_debug/
 .pypirc
 
 .DS_Store
-env_manzi\
-data_ingestion\jobs\screenshot1.png
+env_manzi/
+data_ingestion/jobs/screenshot1.png

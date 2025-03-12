@@ -7,3 +7,5 @@ typer
 pydantic
 Pillow
 tabulate
+dataset
+psycopg2
