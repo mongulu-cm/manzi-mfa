@@ -53,6 +53,6 @@ https://www.example.com/jobs,PAGINATION,810,2089,100,200
 Or specify the URL and scraper type directly:
 ```bash
 export OPENAI_API_KEY=xxxxxxxx # On Windows use $env:OPENAI_API_KEY = "xxxxxxxx"
-python main.py scrape --url <URL> --type scroll --cookiex <COOKIE_X> --cookiey <COOKIE_Y>
-python main.py scrape --url <URL> --type pagination --x <X_POS_NEXT_BUTTON> --y <Y_POS_NEXT_BUTTON> --cookiex <COOKIE_X> --cookiey <COOKIE_Y>
+python main.py scrape --url <URL> --type scroll --comp <COMPANY> --cookiex <COOKIE_X> --cookiey <COOKIE_Y>
+python main.py scrape --url <URL> --type pagination --comp <COMPANY> --x <X_POS_NEXT_BUTTON> --y <Y_POS_NEXT_BUTTON> --cookiex <COOKIE_X> --cookiey <COOKIE_Y>
 ```
