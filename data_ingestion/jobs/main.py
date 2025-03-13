@@ -4,7 +4,7 @@ from typing import Optional
 from scrapers.scraper_factory import ScraperFactory, ScraperType
 from utils.functions import get_site_list
 from utils.selenium import get_driver_path, get_positions
-from utils.db import conn, store_job, store_company, read_data
+from utils.db import conn, store_job, store_company
 from tabulate import tabulate
 
 app = typer.Typer(
@@ -23,6 +23,7 @@ def scrape(
     csv_file: Optional[str] = typer.Option(None, "--csv", help="Fichier CSV contenant les URLs et configurations"),
     url: Optional[str] = typer.Option(None, "--url", help="URL à scraper"),
     scraper_type: Optional[ScraperType] = typer.Option(None, "--type", help="Type de scraper (SCROLL/PAGINATION)"),
+    company: Optional[str] = typer.Option(None, "--comp", help="Nom de l'entreprise"),
     x_pos: Optional[int] = typer.Option(None, "--x", help="Position X du bouton next (requis pour PAGINATION)"),
     y_pos: Optional[int] = typer.Option(None, "--y", help="Position Y du bouton next (requis pour PAGINATION)"),
     cookie_x: Optional[int] = typer.Option(None, "--cookiex", help="Position X du bouton cookie"),
@@ -55,7 +56,7 @@ def scrape(
             typer.echo("Error: --x et --y sont requis pour le type PAGINATION")
             raise typer.Exit(1)
 
-        execute_scraper(url, scraper_type, x_pos, y_pos, cookie_x, cookie_y)
+        execute_scraper(url, scraper_type, company, x_pos, y_pos, cookie_x, cookie_y)
 
 @app.command()
 def store(
@@ -91,11 +92,19 @@ def store(
             raise typer.Exit(code=1)
     
     database = conn()
-    store_company(database, name, contact, url, scraper_type, metadata)
+    for comp in database['entreprises']:
+        t_name = str(name).lower().replace(" ", "")
+        t_contact = str(contact).lower().replace(" ", "")
+        if comp['nom'].lower().replace(" ", "") == t_name and comp['contact'].lower().replace(" ", "") == t_contact:
+            typer.echo("Error: Entreprise deja presente dans la base")
+            raise typer.Exit(1)
+        else:
+            store_company(database, name, contact, url, scraper_type, metadata)
 
 def execute_scraper(
     url: str,
     scraper_type: ScraperType,
+    company: Optional[str] = None,
     x: Optional[int] = None,
     y: Optional[int] = None,
     cookie_x: Optional[int] = None,
@@ -114,12 +123,9 @@ def execute_scraper(
         cookie_y=cookie_y
     )
     database = conn()
-    print(database.tables)
-    print("#############################################")
     jobs = scraper.scrape()
     for job in jobs:
-        print(job)
-        store_job(database, _, job['title'], job['location']) # Comment gerer le nom de l'entreprise?
+        store_job(database, company, job['title'], job['location'])
     print(tabulate(jobs, headers="keys", tablefmt="grid"))
 
 if __name__ == "__main__":

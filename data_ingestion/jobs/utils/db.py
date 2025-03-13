@@ -10,9 +10,5 @@ def store_company(db, name, cont, lien, scrapper, data):
 
 def store_job(db, entreprise, title, location):
     df = db['jobs']
-    df.insert(dict(nom_enteprise=entreprise, titre=title, localisation=location))
-
-def read_data(db, table):
-    return db[table].all()
-
+    df.insert(dict(nom_entreprise=entreprise, titre=title, localisation=location))
 
