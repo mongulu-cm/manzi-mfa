@@ -8,4 +8,4 @@ pydantic
 Pillow
 tabulate
 dataset
-psycopg2
+psycopg2-binary

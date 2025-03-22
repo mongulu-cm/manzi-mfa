@@ -4,7 +4,7 @@ from typing import Optional
 from scrapers.scraper_factory import ScraperFactory, ScraperType
 from utils.functions import get_site_list
 from utils.selenium import get_driver_path, get_positions
-from utils.db import conn, store_job, store_company
+from utils.db import conn,get_jobs_by_company, store_job, store_company
 from tabulate import tabulate
 
 app = typer.Typer(
@@ -34,19 +34,18 @@ def scrape(
     """
     if csv_file:
         urls_config = get_site_list(csv_file)
-        for config in urls_config:
-            parts = config.split(',')
-            url = parts[0]
-            scraper_type = ScraperType[parts[1]]
+        for config in urls_config[1:]:
+            parts = config.split(';')
+            company = parts[0]
+            url = parts[1]
+            scraper_type = ScraperType(parts[2])
+            cookie_x = int(parts[5])
+            cookie_y = int(parts[6])
             if scraper_type == ScraperType.PAGINATION:
-                x, y = int(parts[2]), int(parts[3])
-                cookie_x_value, cookie_y_value = None, None
-                if len(parts) >= 6:
-                    cookie_x_value = int(parts[4])
-                    cookie_y_value = int(parts[5])
-                execute_scraper(url, scraper_type, x, y, cookie_x_value, cookie_y_value)
+                x, y = int(parts[3]), int(parts[4])
+                execute_scraper(url, scraper_type, company,x, y, cookie_x, cookie_y)
             else:
-                execute_scraper(url, scraper_type, cookie_x=cookie_x, cookie_y=cookie_y)
+                execute_scraper(url, scraper_type, company, 0, 0, cookie_x, cookie_y)
     else:
         if not url or not scraper_type:
             typer.echo("Error: --url et --type sont requis si --csv n'est pas fourni")
@@ -90,7 +89,7 @@ def store(
         except json.JSONDecodeError:
             typer.echo("Erreur : Le format du JSON est invalide.", err=True)
             raise typer.Exit(code=1)
-    
+
     database = conn()
     for comp in database['entreprises']:
         t_name = str(name).lower().replace(" ", "")
@@ -111,7 +110,7 @@ def execute_scraper(
     cookie_y: Optional[int] = None
 ):
     """
-    Exécute le scraper avec les paramètres donnés et enregistre dans la base.
+    Exécute le scraper avec les paramètres donnés et synchronise les jobs dans la base.
     """
     scraper = ScraperFactory.create_scraper(
         scraper_type,
@@ -123,10 +122,31 @@ def execute_scraper(
         cookie_y=cookie_y
     )
     database = conn()
-    jobs = scraper.scrape()
-    for job in jobs:
-        store_job(database, company, job['title'], job['location'])
-    print(tabulate(jobs, headers="keys", tablefmt="grid"))
+    new_jobs = scraper.scrape()
+
+    # Synchronisation des jobs
+    existing_jobs = get_jobs_by_company(database, company)
+    existing_jobs_set = {f"{job['titre']}|{job['localisation']}" for job in existing_jobs}
+    new_jobs_set = {f"{job['title']}|{job['location']}" for job in new_jobs}
+
+    # Calcul des jobs à supprimer et à ajouter
+    jobs_to_delete = existing_jobs_set - new_jobs_set
+    jobs_to_add = new_jobs_set - existing_jobs_set
+
+    # Suppression des jobs obsolètes
+    for job in existing_jobs:
+        job_key = f"{job['titre']}|{job['localisation']}"
+        if job_key in jobs_to_delete:
+            database['jobs'].delete(id=job['id'])
+
+    # Ajout des nouveaux jobs
+    for job in new_jobs:
+        job_key = f"{job['title']}|{job['location']}"
+        if job_key in jobs_to_add:
+            print(f"Ajout du nouveau job: {job}")
+            store_job(database, company, job['title'], job['location'])
+
+    print(tabulate(new_jobs, headers="keys", tablefmt="grid"))
 
 if __name__ == "__main__":
     app()

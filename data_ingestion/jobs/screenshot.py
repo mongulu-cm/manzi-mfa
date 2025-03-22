@@ -244,23 +244,3 @@ def stitch_images(image_paths):
     return stitched_image
 
 
-
-# Take screenshot and save it
-#driver.save_screenshot(r"C:\Users\Joyce Pascale\PyProjects\manzi-mfa\data_ingestion\jobs\screenshot1.png")
-#driver.quit()
-
-# Déterminer le chemin du driver en fonction du système d'exploitation
-if platform.system() == 'Windows':
-    driver = r'C:\Program Files\Google\chromedriver-win64\chromedriver.exe'  # Notez le 'r' pour raw string
-elif platform.system() == 'Darwin':  # Darwin est le nom du système pour macOS
-    driver = '/opt/homebrew/bin/chromedriver'
-else:
-    driver = '/usr/local/bin/chromedriver'  # Pour Linux
-
-output_path = r"C:\Users\Joyce Pascale\PyProjects\manzi-mfa\data_ingestion\jobs\screenshot1.png"
-url = get_site_list("list.txt")[0]
-
-print(get_jobs(url, output_path, driver))
-# print(get_positions(url,driver))
-# print(click_on_next(url, driver, 810, 2089))
-

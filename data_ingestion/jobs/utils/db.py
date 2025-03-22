@@ -12,3 +12,6 @@ def store_job(db, entreprise, title, location):
     df = db['jobs']
     df.insert(dict(nom_entreprise=entreprise, titre=title, localisation=location))
 
+def get_jobs_by_company(db, entreprise):
+    df = db['jobs']
+    return list(df.find(nom_entreprise=entreprise))
