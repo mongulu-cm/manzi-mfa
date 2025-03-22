@@ -3,6 +3,7 @@ name: Scrape Companies
 on:
   schedule:
     - cron: '0 9 * * 1' # Chaque lundi à 09h
+  workflow_dispatch:
 
 env:
   DATABASE_URL:  ${{ secrets.DATABASE_URL }}

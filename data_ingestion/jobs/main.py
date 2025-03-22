@@ -37,6 +37,7 @@ def scrape(
         for config in urls_config[1:]:
             parts = config.split(';')
             company = parts[0]
+            print("=============== Entreprise: ", company," ===============")
             url = parts[1]
             scraper_type = ScraperType(parts[2])
             cookie_x = int(parts[5])
