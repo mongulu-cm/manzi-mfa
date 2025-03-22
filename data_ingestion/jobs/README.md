@@ -46,8 +46,8 @@ python main.py scrape --csv <CSV_FILE>
 ```
 with a sample CSV file that follows the structure:
 ```plaintext
-https://www.example.com/jobs,SCROLL, , ,100,200
-https://www.example.com/jobs,PAGINATION,810,2089,100,200
+company;url;type_scrapper;pos x;pos y;cookie x;cookie y
+Ivalua;https://www.ivalua.com/company/careers/;scroll;;;495;648
 ```
 
 Or specify the URL and scraper type directly:
