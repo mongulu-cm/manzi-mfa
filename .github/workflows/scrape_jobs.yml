@@ -1,0 +1,68 @@
+name: Scrape Companies
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Chaque lundi à 09h
+
+env:
+  DATABASE_URL:  ${{ secrets.DATABASE_URL }}
+  OPENAI_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install software
+        run: |
+          sudo apt-get update && sudo apt-get install -y chromium-browser
+          wget https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.165/linux64/chromedriver-linux64.zip
+          unzip chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Install dependencies
+        run: |
+          pip install -r data_ingestion/jobs/requirements.txt
+
+      - name: Fetch companies from database
+        id: fetch_companies
+        run: |
+          python <<EOF
+          import dataset
+          import csv
+          import os
+
+          # Connexion à la base de donnée
+          db = dataset.connect(os.environ["DATABASE_URL"])
+          companies = db['entreprises'].all()
+
+          # Sauvegarder les entreprises dans un fichier CSV temporaire
+          with open("companies.csv", "w", newline="") as f:
+              writer = csv.writer(f, delimiter=";")
+              writer.writerow(["company", "url", "type_scrapper","pos x", "pos y", "cookie x", "cookie y"])
+              for c in companies:
+                  metadata = eval(c["metadata"]) if c["metadata"] else {}
+                  writer.writerow([
+                      c["nom"],
+                      c["url"],
+                      c["type_scrapper"],
+                      metadata.get("x_pos", ""),
+                      metadata.get("y_pos", ""),
+                      metadata.get("cookie_x", ""),
+                      metadata.get("cookie_y", "")
+                  ])
+          EOF
+          cat companies.csv
+
+      - name: Sync jobs
+        run: |
+          python data_ingestion/jobs/main.py scrape --csv companies.csv

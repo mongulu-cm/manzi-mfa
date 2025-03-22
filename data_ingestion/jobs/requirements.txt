@@ -1,0 +1,11 @@
+beautifulsoup4
+requests
+pandas
+openai
+selenium
+typer
+pydantic
+Pillow
+tabulate
+dataset
+psycopg2-binary
