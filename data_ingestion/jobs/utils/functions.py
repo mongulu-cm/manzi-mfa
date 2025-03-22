@@ -2,6 +2,8 @@ import base64
 from openai import OpenAI
 from models.job import Jobs
 from PIL import Image
+import boto3
+from botocore.exceptions import BotoCoreError, ClientError
 
 system_prompt = '''
     You are an agent specialized in checking if an image contains jobs title and location. If it's the case, you are able to extract them all.
@@ -64,3 +66,23 @@ def stitch_images(image_paths):
         y_offset += img.size[1]
 
     return stitched_image
+
+def send_email(subject: str, body: str, recipient: str):
+    """
+    Send an email using Amazon SES.
+    """
+
+    ses_client = boto3.client('ses', region_name='eu-central-1')  # Adjust region as needed
+    sender_email = "Mongulu jobs scraper <relay@mongulu.cm>"  # Replace with your verified SES email
+    try:
+        response = ses_client.send_email(
+            Source=sender_email,
+            Destination={'ToAddresses': [recipient]},
+            Message={
+                'Subject': {'Data': subject},
+                'Body': {'Text': {'Data': body}}
+            }
+        )
+        print("Email sent! Message ID:", response['MessageId'])
+    except (BotoCoreError, ClientError) as error:
+        print("Failed to send email:", error)

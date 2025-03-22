@@ -2,7 +2,7 @@ import typer
 import json
 from typing import Optional
 from scrapers.scraper_factory import ScraperFactory, ScraperType
-from utils.functions import get_site_list
+from utils.functions import get_site_list, send_email
 from utils.selenium import get_driver_path, get_positions
 from utils.db import conn,get_jobs_by_company, store_job, store_company
 from tabulate import tabulate
@@ -34,19 +34,41 @@ def scrape(
     """
     if csv_file:
         urls_config = get_site_list(csv_file)
+        all_new_jobs = {}
+        company_urls = {}
         for config in urls_config[1:]:
             parts = config.split(';')
             company = parts[0]
-            print("=============== Entreprise: ", company," ===============")
-            url = parts[1]
+            company_url = parts[1]
+            print("=============== Entreprise: ", company, " ===============")
             scraper_type = ScraperType(parts[2])
             cookie_x = int(parts[5])
             cookie_y = int(parts[6])
             if scraper_type == ScraperType.PAGINATION:
                 x, y = int(parts[3]), int(parts[4])
-                execute_scraper(url, scraper_type, company,x, y, cookie_x, cookie_y)
+                new_jobs = execute_scraper(company_url, scraper_type, company, x, y, cookie_x, cookie_y)
             else:
-                execute_scraper(url, scraper_type, company, 0, 0, cookie_x, cookie_y)
+                new_jobs = execute_scraper(company_url, scraper_type, company, 0, 0, cookie_x, cookie_y)
+            all_new_jobs.update(new_jobs)
+            company_urls[company] = company_url
+
+        # Préparation et envoi de l'email
+        if all_new_jobs:
+            email_subject = "Nouveaux jobs par entreprise: " + ", ".join(
+                [f"{company} ({len(jobs)})" for company, jobs in all_new_jobs.items()]
+            )
+            email_body = "Voici les nouveaux jobs par entreprise :\n\n"
+            for company, jobs in all_new_jobs.items():
+                email_body += f"Entreprise: {company}\n"
+                email_body += f"URL: {company_urls[company]}\n"
+                email_body += "\n".join([f"- {job['title']} à {job['location']}" for job in jobs])
+                email_body += "\n\n"
+
+            send_email(
+                subject=email_subject,
+                body=email_body,
+                recipient="collectif@mongulu.cm"  # Replace with the recipient's email
+            )
     else:
         if not url or not scraper_type:
             typer.echo("Error: --url et --type sont requis si --csv n'est pas fourni")
@@ -112,6 +134,7 @@ def execute_scraper(
 ):
     """
     Exécute le scraper avec les paramètres donnés et synchronise les jobs dans la base.
+    Retourne les nouveaux jobs ajoutés.
     """
     scraper = ScraperFactory.create_scraper(
         scraper_type,
@@ -141,13 +164,17 @@ def execute_scraper(
             database['jobs'].delete(id=job['id'])
 
     # Ajout des nouveaux jobs
+    new_jobs_by_company = {}
     for job in new_jobs:
         job_key = f"{job['title']}|{job['location']}"
         if job_key in jobs_to_add:
             print(f"Ajout du nouveau job: {job}")
             store_job(database, company, job['title'], job['location'])
+            if company not in new_jobs_by_company:
+                new_jobs_by_company[company] = []
+            new_jobs_by_company[company].append(job)
 
-    print(tabulate(new_jobs, headers="keys", tablefmt="grid"))
+    return new_jobs_by_company
 
 if __name__ == "__main__":
     app()

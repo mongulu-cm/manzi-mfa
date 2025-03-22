@@ -9,3 +9,4 @@ Pillow
 tabulate
 dataset
 psycopg2-binary
+boto3
