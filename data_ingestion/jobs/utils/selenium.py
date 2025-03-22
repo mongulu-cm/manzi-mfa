@@ -10,6 +10,7 @@ from .functions import analyze_screenshot
 def setup_chrome_driver(driver_path: str) -> webdriver.Chrome:
     chrome_options = Options()
     chrome_options.add_argument("--headless")
+    chrome_options.add_argument("window-size=960,1080")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
