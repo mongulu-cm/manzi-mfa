@@ -15,7 +15,7 @@ spec:
             node-type: data-access
           containers:
           - name: mysql-dump-container
-            image: mongulu/mysql-data-backup:latest
+            image: mongulu/database-backup:latest
             env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -28,6 +28,22 @@ spec:
               value: easyappointments
             - name: MYSQL_HOST
               value: mysql
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: password
+            - name: POSTGRES_USER
+              value: avnadmin
+            - name: POSTGRES_DATABASE
+              value: manzi_mfa
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: host
+            - name: POSTGRES_PORT
+              value: "25661"
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -62,8 +78,16 @@ spec:
 
               {
                 mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
-                aws s3 cp "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
+                s4cmd put "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
               } || {
                 handle_error "Échec de la sauvegarde MySQL pour $MYSQL_DATABASE le $current_date"
               }
+
+              {
+                PGPASSWORD=$POSTGRES_PASSWORD pg_dump -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DATABASE > "jobs-$snapshot_name"
+                s4cmd put "jobs-$snapshot_name" s3://manzi-mfa/backup-db/jobs-$snapshot_name
+              } || {
+                handle_error "Échec de la sauvegarde PostgreSQL pour $POSTGRES_DATABASE le $current_date"
+              }
+
           restartPolicy: OnFailure
