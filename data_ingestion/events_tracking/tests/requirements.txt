@@ -1,5 +1,0 @@
-pytest
-boto3
-requests==2.32.0
-psycopg2-binary
-sqlalchemy
