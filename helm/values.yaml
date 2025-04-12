@@ -112,35 +112,3 @@ service:
 
 backupManziMfaDb:
   schedule: "0 0 * * *"
-  args: - |
-              apt update &&apt install -y curl
-              send_notification() {
-                message=$1
-                curl -X POST -H "Content-Type: application/json" \
-                  -d "{\"text\":\"❌ $message\"}" \
-                  https://eoqcnomqns2z3tq.m.pipedream.net
-              }
-
-              # Fonction pour gérer les erreurs
-              handle_error() {
-                error_message=$1
-                send_notification "$error_message"
-                exit 1
-              }
-
-              current_date=$(date "+%Y-%m-%d")
-              snapshot_name="backup-$current_date.sql"
-
-              {
-                mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
-                s4cmd put "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
-              } || {
-                handle_error "Échec de la sauvegarde MySQL pour $MYSQL_DATABASE le $current_date"
-              }
-
-              {
-                PGPASSWORD=$POSTGRES_PASSWORD pg_dump -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DATABASE > "jobs-$snapshot_name"
-                s4cmd put "jobs-$snapshot_name" s3://manzi-mfa/backup-db/jobs-$snapshot_name
-              } || {
-                handle_error "Échec de la sauvegarde PostgreSQL pour $POSTGRES_DATABASE le $current_date"
-              }
