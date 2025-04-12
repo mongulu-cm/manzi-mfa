@@ -56,6 +56,7 @@ spec:
                   key: secret-access-key
 
             command: ["sh", "-c"]
-            args: {{ .Values.backupManziMfaDb.args }}
+            args: 
+            - {{ .Values.backupManziMfaDb.args | indent 16 }}
 
           restartPolicy: OnFailure

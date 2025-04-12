@@ -112,8 +112,7 @@ service:
 
 backupManziMfaDb:
   schedule: "0 0 * * *"
-  args:
-    - |
+  args: - |
               apt update &&apt install -y curl
               send_notification() {
                 message=$1
