@@ -109,3 +109,6 @@ affinity: {}
 
 service:
   test-port: 80
+
+backupManziMfaDb:
+  schedule: "0 0 * * *"
