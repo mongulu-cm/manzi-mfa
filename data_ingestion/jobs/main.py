@@ -114,14 +114,18 @@ def store(
             raise typer.Exit(code=1)
 
     database = conn()
+    t_name = str(name).lower().replace(" ", "")
+    t_contact = str(contact).lower().replace(" ", "")
+
     for comp in database['entreprises']:
-        t_name = str(name).lower().replace(" ", "")
-        t_contact = str(contact).lower().replace(" ", "")
-        if comp['nom'].lower().replace(" ", "") == t_name and comp['contact'].lower().replace(" ", "") == t_contact:
+        if (
+            comp['nom'].lower().replace(" ", "") == t_name
+            and comp['contact'].lower().replace(" ", "") == t_contact
+        ):
             typer.echo("Error: Entreprise deja presente dans la base")
             raise typer.Exit(1)
-        else:
-            store_company(database, name, contact, url, scraper_type, metadata)
+
+    store_company(database, name, contact, url, scraper_type, metadata)
 
 def execute_scraper(
     url: str,
