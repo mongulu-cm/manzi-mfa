@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-notifications-secret
+  namespace: argocd
+stringData:
+  github-privateKey: |
+    -----BEGIN RSA PRIVATE KEY-----
+    <YOUR-PRIVATE-KEY>
+    -----END RSA PRIVATE KEY-----
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-notifications-cm
+    app.kubernetes.io/part-of: argocd
+    notifications.argoproj.io/config: ""
+data:
+  service.github: |
+    appID: <APP-ID>
+    installationID: <INSTALLATION-ID>
+    privateKey: $github-privateKey
+  trigger.sync-operation-change: |
+    - when: app.status.operationState.phase in ['Running']
+      send: [github-commit-status]
+    - when: app.status.operationState.phase in ['Succeeded', 'Error', 'Failed']
+      send: [github-commit-status]
+  defaultTriggers: |
+    - sync-operation-change
+
