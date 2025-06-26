@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: preview-environments
+  namespace: argocd
+spec:
+  generators:
+  - pullRequest:
+      github:
+        owner: mongulu-cm
+        repo: manzi-mfa
+        tokenRef:
+          secretName: repo-3374240770 
+          key: ARGO_ACCESS_TOKEN
+        labels:
+        - preview
+      requeueAfterSeconds: 15
+  template:      
+    metadata:
+      name: 'preview-{{branch}}-{{number}}'
+    spec:
+      source:
+        repoURL: https://github.com/mongulu-cm/manzi-mfa.git
+        targetRevision: '{{head_sha}}'
+        path: helm
+        helm:
+          parameters:
+          - name: "deploymentEasyappointment.imageTag"
+            value: '{{head_sha}}'
+      project: default
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true  
+        automated:
+          prune: true
+          selfHeal: true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'preview-{{branch}}-{{number}}'
