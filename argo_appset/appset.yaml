@@ -27,7 +27,7 @@ spec:
           parameters:
           - name: "deploymentEasyappointment.imageTag"
             value: '{{head_sha}}'
-      project: default
+      project: manzi-mfa
       syncPolicy:
         syncOptions:
           - CreateNamespace=true  
