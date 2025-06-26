@@ -10,8 +10,8 @@ spec:
         owner: mongulu-cm
         repo: manzi-mfa
         tokenRef:
-          secretName: repo-3374240770 
-          key: ARGO_ACCESS_TOKEN
+          secretName: private-repo-3374240770 
+          key: access_key
         labels:
         - preview
       requeueAfterSeconds: 15
