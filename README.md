@@ -6,6 +6,10 @@
 * Have a [pipedream](https://pipedream.com/) account and fork [workflow ](https://pipedream.com/new?h=tch_wGKfvD)
 
 
+## Learn about this repo
+* Gitpodcast: https://www.gitpodcast.com/mongulu-cm/manzi-mfa
+* Gitdiagram: https://gitdiagram.com/mongulu-cm/manzi-mfa
+
 ## Deployment
 
 Firstly, install all required tools:
