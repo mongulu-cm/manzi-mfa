@@ -28,22 +28,6 @@ spec:
               value: easyappointments
             - name: MYSQL_HOST
               value: mysql
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgresql-credentials
-                  key: password
-            - name: POSTGRES_USER
-              value: avnadmin
-            - name: POSTGRES_DATABASE
-              value: manzi_mfa
-            - name: POSTGRES_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: postgresql-credentials
-                  key: host
-            - name: POSTGRES_PORT
-              value: "25661"
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -56,9 +40,9 @@ spec:
                   key: secret-access-key
 
             command: ["sh", "-c"]
-            args: 
+            args:
             - |
-              apt update &&apt install -y curl
+              apt update && apt install -y curl
               send_notification() {
                 message=$1
                 curl -X POST -H "Content-Type: application/json" \
@@ -78,16 +62,9 @@ spec:
 
               {
                 mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE > "$snapshot_name"
-                s4cmd put "$snapshot_name" s3://manzi-mfa/backup-db/$snapshot_name
+                s4cmd put "$snapshot_name" s3://mongulu-files/backups/manzi-mfa/$snapshot_name
               } || {
                 handle_error "Échec de la sauvegarde MySQL pour $MYSQL_DATABASE le $current_date"
-              }
-
-              {
-                PGPASSWORD=$POSTGRES_PASSWORD pg_dump -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DATABASE > "jobs-$snapshot_name"
-                s4cmd put "jobs-$snapshot_name" s3://manzi-mfa/backup-db/jobs-$snapshot_name
-              } || {
-                handle_error "Échec de la sauvegarde PostgreSQL pour $POSTGRES_DATABASE le $current_date"
               }
 
           restartPolicy: OnFailure
