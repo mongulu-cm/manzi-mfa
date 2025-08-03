@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page d'Upload Uploadcare - Debug</title>
+  <!-- CSS du widget Uploadcare -->
+  <link rel="stylesheet" href="https://ucarecdn.com/libs/widget/3.x/uploadcare.min.css" />
+</head>
+<body>
+  <h1>Envoyer un fichier (Debug)</h1>
+
+  <!-- Champ d'uploadcare -->
+  <input
+    id="uploader"
+    type="hidden"
+    role="uploadcare-uploader"
+    data-public-key="f0d861916812252d7025"
+    data-clearable
+    data-tabs="file url facebook gdrive"
+    style="width: 100%; max-width: 400px;"
+  />
+
+  <!-- JS du widget Uploadcare -->
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+  <script>
+    // Check Uploadcare library
+    if (!window.uploadcare || typeof uploadcare.Widget !== 'function') {
+      console.error('Uploadcare library not loaded or incompatible.');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM fully loaded');
+
+      var widget;
+      try {
+        widget = uploadcare.Widget('#uploader');
+        console.log('Widget instance created:', widget);
+      } catch (e) {
+        console.error('Error instantiating widget:', e);
+        return;
+      }
+
+      // Log public key from the widget instance
+      try {
+        console.log('Public key:', widget.publicKey);
+      } catch (e) {
+        console.warn('widget.publicKey not accessible');
+      }
+
+      // Log locale if available
+      if (typeof widget.locale === 'function') {
+        console.log('Locale:', widget.locale());
+      } else if (widget.locale) {
+        console.log('Locale:', widget.locale);
+      }
+
+      // Attach event handlers with supported methods
+      if (typeof widget.onUploadComplete === 'function') {
+        widget.onUploadComplete(function(info) {
+          console.log('Upload complete event fired:', info);
+          alert('Fichier uploadé ! URL CDN: ' + info.cdnUrl);
+        });
+        console.log('onUploadComplete handler attached');
+      } else {
+        console.error('onUploadComplete method not available on widget');
+      }
+
+      if (typeof widget.onUploadProgress === 'function') {
+        widget.onUploadProgress(function(progress) {
+          console.log('Upload progress event:', progress);
+        });
+        console.log('onUploadProgress handler attached');
+      } else {
+        console.warn('onUploadProgress method not available on widget');
+      }
+    });
+  </script>
+</body>
+</html>
