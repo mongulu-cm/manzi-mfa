@@ -1,80 +1,80 @@
-name: Scrape Companies
+# name: Scrape Companies
 
-on:
-  schedule:
-    - cron: '0 9 * * 1' # Chaque lundi à 09h
-  workflow_dispatch:
+# on:
+#   schedule:
+#     - cron: '0 9 * * 1' # Chaque lundi à 09h
+#   workflow_dispatch:
 
-env:
-  DATABASE_URL:  ${{ secrets.DATABASE_URL }}
-  OPENAI_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
+# env:
+#   DATABASE_URL:  ${{ secrets.DATABASE_URL }}
+#   OPENAI_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
 
-jobs:
-  scrape:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+# jobs:
+#   scrape:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       id-token: write
+#       contents: read
 
-    steps:
+#     steps:
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # ratchet:aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::053932140667:role/mongulu-github
-          role-session-name: mtchoun-mouh-deployment
-          aws-region: eu-central-1
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # ratchet:aws-actions/configure-aws-credentials@v1
+#         with:
+#           role-to-assume: arn:aws:iam::053932140667:role/mongulu-github
+#           role-session-name: mtchoun-mouh-deployment
+#           aws-region: eu-central-1
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: "3.11"
 
-      - name: Install software
-        run: |
-          sudo apt-get update && sudo apt-get install -y chromium-browser
-          wget https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.165/linux64/chromedriver-linux64.zip
-          unzip chromedriver-linux64.zip
-          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-          sudo chmod +x /usr/local/bin/chromedriver
+#       - name: Install software
+#         run: |
+#           sudo apt-get update && sudo apt-get install -y chromium-browser
+#           wget https://storage.googleapis.com/chrome-for-testing-public/134.0.6998.165/linux64/chromedriver-linux64.zip
+#           unzip chromedriver-linux64.zip
+#           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+#           sudo chmod +x /usr/local/bin/chromedriver
 
-      - name: Install dependencies
-        run: |
-          pip install -r data_ingestion/jobs/requirements.txt
+#       - name: Install dependencies
+#         run: |
+#           pip install -r data_ingestion/jobs/requirements.txt
 
-      - name: Fetch companies from database
-        id: fetch_companies
-        run: |
-          python <<EOF
-          import dataset
-          import csv
-          import os
+#       - name: Fetch companies from database
+#         id: fetch_companies
+#         run: |
+#           python <<EOF
+#           import dataset
+#           import csv
+#           import os
 
-          # Connexion à la base de donnée
-          db = dataset.connect(os.environ["DATABASE_URL"])
-          companies = db['entreprises'].all()
+#           # Connexion à la base de donnée
+#           db = dataset.connect(os.environ["DATABASE_URL"])
+#           companies = db['entreprises'].all()
 
-          # Sauvegarder les entreprises dans un fichier CSV temporaire
-          with open("companies.csv", "w", newline="") as f:
-              writer = csv.writer(f, delimiter=";")
-              writer.writerow(["company", "url", "type_scrapper","pos x", "pos y", "cookie x", "cookie y"])
-              for c in companies:
-                  metadata = eval(c["metadata"]) if c["metadata"] else {}
-                  writer.writerow([
-                      c["nom"],
-                      c["url"],
-                      c["type_scrapper"],
-                      metadata.get("x_pos", ""),
-                      metadata.get("y_pos", ""),
-                      metadata.get("cookie_x", ""),
-                      metadata.get("cookie_y", "")
-                  ])
-          EOF
-          cat companies.csv
+#           # Sauvegarder les entreprises dans un fichier CSV temporaire
+#           with open("companies.csv", "w", newline="") as f:
+#               writer = csv.writer(f, delimiter=";")
+#               writer.writerow(["company", "url", "type_scrapper","pos x", "pos y", "cookie x", "cookie y"])
+#               for c in companies:
+#                   metadata = eval(c["metadata"]) if c["metadata"] else {}
+#                   writer.writerow([
+#                       c["nom"],
+#                       c["url"],
+#                       c["type_scrapper"],
+#                       metadata.get("x_pos", ""),
+#                       metadata.get("y_pos", ""),
+#                       metadata.get("cookie_x", ""),
+#                       metadata.get("cookie_y", "")
+#                   ])
+#           EOF
+#           cat companies.csv
 
-      - name: Sync jobs
-        run: |
-          python data_ingestion/jobs/main.py scrape --csv companies.csv
+#       - name: Sync jobs
+#         run: |
+#           python data_ingestion/jobs/main.py scrape --csv companies.csv
