@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: backup-manzi-mfa-db
-  namespace: easyappointments
+  namespace: {{ .Release.Namespace }}
 spec:
   schedule: {{ .Values.backupManziMfaDb.schedule }}
   successfulJobsHistoryLimit: 1
