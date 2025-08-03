@@ -1,0 +1,25 @@
+name: Upload CSV to Pipedream
+
+on:
+  workflow_dispatch:
+    inputs:
+      csv_path:
+        description: 'Path to the CSV file to upload'
+        required: true
+        default: 'data.csv'
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        # This step checks out your repository under $GITHUB_WORKSPACE
+
+      - name: Upload CSV to Pipedream
+        run: |
+          # Send CSV file as multipart/form-data to the Pipedream endpoint
+          curl -X POST \
+            -H 'Content-Type: multipart/form-data' \
+            -F "file=@${{ github.event.inputs.csv_path }}" \
+            https://eoku9eq1329zri2.m.pipedream.net
